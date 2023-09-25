@@ -1,16 +1,16 @@
+import datetime
+
+
 class Book:
     def __init__(self, title):
         self.title = title
         self.contracts_list = []
 
     def contracts(self):
-        return self.contracts_list
+         return [contract for contract in Contract.all_contracts if contract.book == self]
 
     def authors(self):
-        authors = []
-        for contract in self.contracts_list:
-            authors.append(contract.author)
-        return authors
+        return [contract.author for contract in self.contracts()]
 
 class Author:
     def __init__(self, name):
@@ -18,13 +18,10 @@ class Author:
         self.contracts_list = []
 
     def contracts(self):
-        return self.contracts_list
+         return [contract for contract in Contract.all_contracts if contract.author == self]
 
     def books(self):
-        books = []
-        for contract in self.contracts_list:
-            books.append(contract.book)
-        return books
+          return [contract.book for contract in self.contracts()]
 
     def sign_contract(self, book, date, royalties):
         contract = Contract(self, book, date, royalties)
@@ -33,10 +30,7 @@ class Author:
         return contract
 
     def total_royalties(self):
-        total = 0
-        for contract in self.contracts_list:
-            total += contract.royalties
-        return total
+         return sum(contract.royalties for contract in self.contracts())
 
 class Contract:
     all_contracts = []
@@ -61,4 +55,6 @@ class Contract:
     @classmethod
     def contracts_by_date(cls):
         return sorted(cls.all_contracts, key=lambda contract: contract.date)
+
+
 
